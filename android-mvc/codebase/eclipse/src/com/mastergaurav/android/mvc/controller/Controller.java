@@ -2,7 +2,6 @@ package com.mastergaurav.android.mvc.controller;
 
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Handler;
@@ -11,7 +10,6 @@ import android.os.Message;
 import com.mastergaurav.android.app.view.HomeScreenActivity;
 import com.mastergaurav.android.app.view.MainActivity;
 import com.mastergaurav.android.common.view.BaseActivity;
-import com.mastergaurav.android.common.view.ErrorActivity;
 import com.mastergaurav.android.common.view.ProgressActivity;
 import com.mastergaurav.android.mvc.command.CommandExecutor;
 import com.mastergaurav.android.mvc.common.IResponseListener;
@@ -27,8 +25,7 @@ public class Controller extends Application implements IResponseListener
 	// Useful for moving from error to previous or hitting the "Back" button
 
 	private BaseActivity currentActivity;
-	private Activity progressActivity;
-	private Activity errorActivity;
+	// private Activity errorActivity;
 
 	private final HashMap<Integer, Class<? extends BaseActivity>> registeredActivities = new HashMap<Integer, Class<? extends BaseActivity>>();
 
@@ -62,23 +59,23 @@ public class Controller extends Application implements IResponseListener
 
 	public void onActivityCreated(BaseActivity activity)
 	{
-		if(activity instanceof ProgressActivity)
+		// if(activity instanceof ProgressActivity)
+		// {
+		// progressActivity = activity;
+		// } else if(activity instanceof ErrorActivity)
+		// {
+		// errorActivity = activity;
+		// } else
+		// {
+		if(currentActivity != null)
 		{
-			progressActivity = activity;
-		} else if(activity instanceof ErrorActivity)
-		{
-			errorActivity = activity;
-		} else
-		{
-			if(currentActivity != null)
-			{
-				currentActivity.finish();
-			}
-			currentActivity = activity;
-			// TODO/FIXME: Get relevant data
-			// currentActivity.processInitialData(response)
-			// currentActivity.loadMemento(savedMemento)
+			currentActivity.finish();
 		}
+		currentActivity = activity;
+		// TODO/FIXME: Get relevant data
+		// currentActivity.processInitialData(response)
+		// currentActivity.loadMemento(savedMemento)
+		// }
 	}
 
 	// TODO: Do house keeping of saved memento
@@ -92,10 +89,11 @@ public class Controller extends Application implements IResponseListener
 		}
 	}
 
-	public void go(int commandID, Request request, IResponseListener listener)
-	{
-		go(commandID, request, listener, true);
-	}
+	// public void go(int commandID, Request request, IResponseListener
+	// listener)
+	// {
+	// go(commandID, request, listener, true);
+	// }
 
 	public void go(int commandID, Request request, IResponseListener listener, boolean showProgress)
 	{
@@ -104,43 +102,19 @@ public class Controller extends Application implements IResponseListener
 		};
 		request.setTag(newTag);
 
-		if(showProgress)
-		{
-			startProgress();
-		}
-
 		System.out.println("Enqueue command");
 		CommandExecutor.getInstance().enqueueCommand(commandID, request, this);
 		System.out.println("Enqueued command");
 	}
 
-	/**
-	 * Launch the progress activity
-	 */
-	private void startProgress()
-	{
-		System.out.println("Started progress...");
-		Intent intent = new Intent(this, ProgressActivity.class);
-		currentActivity.startActivity(intent);
-	}
-
-	private void stopProgress()
-	{
-		if(progressActivity != null)
-		{
-			progressActivity.finish();
-			progressActivity = null;
-		}
-	}
-
-	private void stopError()
-	{
-		if(errorActivity != null)
-		{
-			errorActivity.finish();
-			errorActivity = null;
-		}
-	}
+//	private void stopError()
+//	{
+//		if(errorActivity != null)
+//		{
+//			errorActivity.finish();
+//			errorActivity = null;
+//		}
+//	}
 
 	public void onError(Response response)
 	{
@@ -164,8 +138,8 @@ public class Controller extends Application implements IResponseListener
 	// FIXME: Need to know whether we're
 	private void processResponse(Message msg)
 	{
-		stopProgress();
-		stopError();
+		// stopProgress();
+		// stopError();
 		System.out.println("Handle Message [thread]: " + Thread.currentThread().getName());
 		System.out.println("Handle Message [what]: " + msg.what);
 		System.out.println("Handle Message [obj]: " + msg.obj);

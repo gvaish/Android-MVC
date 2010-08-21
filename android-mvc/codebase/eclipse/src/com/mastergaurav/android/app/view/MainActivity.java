@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity
 				Request request = new Request(tag, data);
 
 				System.out.println("Starting controller...");
-				getController().go(CommandID.LOGIN_DO, request, MainActivity.this);
+				go(CommandID.LOGIN_DO, request);
 			}
 		});
 	}

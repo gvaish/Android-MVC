@@ -13,6 +13,6 @@
     <activity android:name=".common.view.ProgressActivity"></activity>
 <activity android:name=".app.view.HomeScreenActivity"></activity>
 </application>
-    <uses-sdk android:minSdkVersion="7" />
+    <uses-sdk android:minSdkVersion="5"/>
 
 </manifest> 
