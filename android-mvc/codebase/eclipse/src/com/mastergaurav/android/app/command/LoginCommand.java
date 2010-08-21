@@ -1,17 +1,16 @@
 package com.mastergaurav.android.app.command;
 
+import com.mastergaurav.android.app.model.LoginRequest;
+import com.mastergaurav.android.app.model.LoginResponse;
 import com.mastergaurav.android.mvc.command.AbstractCommand;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
-import com.mastergaurav.android.mvc.model.LoginRequest;
-import com.mastergaurav.android.mvc.model.LoginResponse;
 
 public class LoginCommand extends AbstractCommand
 {
 	@Override
 	public void go()
 	{
-
 		try
 		{
 			Thread.sleep(3000);

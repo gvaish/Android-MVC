@@ -7,11 +7,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mastergaurav.android.R;
+import com.mastergaurav.android.app.model.LoginRequest;
 import com.mastergaurav.android.common.view.BaseActivity;
 import com.mastergaurav.android.mvc.command.CommandID;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
-import com.mastergaurav.android.mvc.model.LoginRequest;
 
 public class MainActivity extends BaseActivity
 {

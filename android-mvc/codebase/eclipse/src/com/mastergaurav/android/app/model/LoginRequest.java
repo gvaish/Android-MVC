@@ -1,4 +1,4 @@
-package com.mastergaurav.android.mvc.model;
+package com.mastergaurav.android.app.model;
 
 public class LoginRequest
 {

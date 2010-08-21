@@ -30,7 +30,7 @@ public class Controller extends Application implements IResponseListener
 	private Activity progressActivity;
 	private Activity errorActivity;
 
-	private final HashMap<Integer, Class<? extends BaseActivity>> screens = new HashMap<Integer, Class<? extends BaseActivity>>();
+	private final HashMap<Integer, Class<? extends BaseActivity>> registeredActivities = new HashMap<Integer, Class<? extends BaseActivity>>();
 
 	private Handler handler = new Handler()
 	{
@@ -45,11 +45,11 @@ public class Controller extends Application implements IResponseListener
 	{
 		super.onCreate();
 
-		screens.clear();
+		registeredActivities.clear();
 		// 1 to 10 are reserved. or better, use enums?
-		screens.put(ACTIVITY_ID_PROGRESS, ProgressActivity.class);
-		screens.put(11, MainActivity.class);
-		screens.put(87945, HomeScreenActivity.class);
+		registeredActivities.put(ACTIVITY_ID_PROGRESS, ProgressActivity.class);
+		registeredActivities.put(11, MainActivity.class);
+		registeredActivities.put(87945, HomeScreenActivity.class);
 
 		CommandExecutor.getInstance().initialize();
 	}
@@ -197,7 +197,7 @@ public class Controller extends Application implements IResponseListener
 				}
 			} else
 			{
-				Class<? extends BaseActivity> cls = screens.get(screenID);
+				Class<? extends BaseActivity> cls = registeredActivities.get(screenID);
 				if(cls != null)
 				{
 					System.out.println("Will launch: " + cls);
