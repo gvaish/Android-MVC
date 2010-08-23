@@ -3,11 +3,14 @@ package com.mastergaurav.android.app.view;
 import java.util.Collection;
 import java.util.List;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.mastergaurav.android.R;
 import com.mastergaurav.android.common.view.BaseActivity;
 
 public class MainContentAdapter extends BaseAdapter
@@ -64,19 +67,29 @@ public class MainContentAdapter extends BaseAdapter
 
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
-
-		TextView toShow = null;
+		ViewGroup toShow = null;
+		TextView tv = null;
 
 		if(convertView != null)
 		{
-			toShow = (TextView) convertView;
+			System.out.println("convertView is NOT null, NOT creating anything...");
+			toShow = (ViewGroup) convertView;
+			tv = (TextView) toShow.findViewById(R.id.lha_tv);
 		} else
 		{
-			toShow = new TextView(activity);
+			System.out.println("convertView is null, creating something...");
+			LayoutInflater li = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			toShow = (ViewGroup) li.inflate(R.layout.layout_home_activity_ca_item, null, false);
+			tv = (TextView) toShow.findViewById(R.id.lha_tv);
 		}
-		toShow.setText(items.get(position));
+
+		if(tv != null)
+		{
+			tv.setText(items.get(position));
+		}
 
 		System.out.println("Got the view with text: " + items.get(position));
+		System.out.println("Something to be shown is: " + toShow);
 		return toShow;
 	}
 

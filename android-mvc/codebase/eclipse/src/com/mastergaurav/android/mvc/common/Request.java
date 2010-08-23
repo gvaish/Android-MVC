@@ -4,7 +4,7 @@ public class Request
 {
 	private Object tag;
 	private Object data;
-	private int screenID;
+	private int activityID;
 
 	public Request()
 	{
@@ -36,13 +36,13 @@ public class Request
 		this.data = data;
 	}
 
-	public int getScreenID()
+	public int getActivityID()
 	{
-		return screenID;
+		return activityID;
 	}
 
-	public void setScreenID(int screenID)
+	public void setActivityID(int activityID)
 	{
-		this.screenID = screenID;
+		this.activityID = activityID;
 	}
 }

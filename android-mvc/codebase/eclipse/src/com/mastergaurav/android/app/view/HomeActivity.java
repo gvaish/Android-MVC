@@ -12,7 +12,7 @@ import com.mastergaurav.android.R;
 import com.mastergaurav.android.app.common.CollectionUtils;
 import com.mastergaurav.android.common.view.BaseActivity;
 
-public class HomeScreenActivity extends BaseActivity
+public class HomeActivity extends BaseActivity
 {
 
 	@Override
@@ -55,7 +55,6 @@ public class HomeScreenActivity extends BaseActivity
 	@Override
 	protected void onCreateContent(Bundle savedInstanceState)
 	{
-		// TODO Auto-generated method stub
 		super.onCreateContent(savedInstanceState);
 	}
 

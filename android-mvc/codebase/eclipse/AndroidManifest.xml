@@ -10,9 +10,11 @@
             </intent-filter>
         </activity>
 
-    <activity android:name=".common.view.ProgressActivity"></activity>
-<activity android:name=".app.view.HomeScreenActivity"></activity>
+    
+<activity android:name=".app.view.HomeActivity"></activity>
 </application>
     <uses-sdk android:minSdkVersion="5"/>
 
+
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest> 

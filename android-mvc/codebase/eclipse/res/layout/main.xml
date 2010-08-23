@@ -3,10 +3,22 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<TextView android:layout_width="fill_parent" android:id="@+id/hw"
-		android:layout_height="wrap_content" android:text="@string/hello"
-		android:textSize="18dp" />
+	<TextView android:layout_width="fill_parent" android:textSize="18dp"
+		android:layout_height="wrap_content" android:text="Username: " />
+
+	<EditText android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:id="@+id/main_usernameEdit" />
+
+	<TextView android:layout_width="fill_parent" android:textSize="18dp"
+		android:layout_height="wrap_content" android:text="Password: " />
+
+	<EditText android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:id="@+id/main_passwordEdit" />
 
 	<Button android:id="@+id/loginBtn" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Login" />
+
+	<TextView android:layout_width="fill_parent" android:id="@+id/hw"
+		android:layout_height="wrap_content" android:text="@string/hello"
+		android:textSize="18dp" />
 </LinearLayout>

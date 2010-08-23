@@ -4,14 +4,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mastergaurav.android.R;
+import com.mastergaurav.android.app.command.CommandID;
 import com.mastergaurav.android.app.model.LoginRequest;
+import com.mastergaurav.android.app.model.xml.LoginResponse;
 import com.mastergaurav.android.common.view.BaseActivity;
-import com.mastergaurav.android.mvc.command.CommandID;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
+import com.mastergaurav.android.mvc.controller.Controller;
 
 public class MainActivity extends BaseActivity
 {
@@ -25,7 +28,10 @@ public class MainActivity extends BaseActivity
 		{
 			public void onClick(View v)
 			{
-				LoginRequest data = new LoginRequest("1", "1");
+				String username = ((EditText) findViewById(R.id.main_usernameEdit)).getText().toString();
+				String password = ((EditText) findViewById(R.id.main_passwordEdit)).getText().toString();
+
+				LoginRequest data = new LoginRequest(username, password);
 				Object tag = "L";
 
 				Request request = new Request(tag, data);
@@ -34,11 +40,14 @@ public class MainActivity extends BaseActivity
 				go(CommandID.LOGIN_DO, request);
 			}
 		});
+
+		Controller.getInstance().registerActivity(ActivityID.ACTIVITY_ID_HOME, HomeActivity.class);
 	}
 
 	@Override
 	public void onSuccess(Response response)
 	{
+		hideProgress();
 		System.out.println("Received some response: " + Thread.currentThread().getName());
 		TextView tv = (TextView) findViewById(R.id.hw);
 		tv.setText("Response: " + response.getData());
@@ -47,9 +56,24 @@ public class MainActivity extends BaseActivity
 	@Override
 	public void onError(Response response)
 	{
+		hideProgress();
 		System.out.println("Received some response: " + Thread.currentThread().getName());
 		TextView tv = (TextView) findViewById(R.id.hw);
-		tv.setText("Error Response: " + response.getData());
+		
+		Object data = response.getData();
+		
+		if(data instanceof Throwable)
+		{
+			Throwable t = (Throwable) data;
+			tv.setText("Exception: " + t.getClass().getName() + "\n" + t.getMessage());
+		} else if(data instanceof LoginResponse)
+		{
+			LoginResponse lr = (LoginResponse) data;
+			tv.setText("Login Failed: " + lr.getResponse().getMessage());
+		} else
+		{
+			tv.setText("Error Response: " + response.getData());
+		}
 	}
 
 	@Override

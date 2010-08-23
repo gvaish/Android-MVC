@@ -3,6 +3,7 @@ package com.mastergaurav.android.mvc.command;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
+import com.mastergaurav.android.app.command.CommandID;
 import com.mastergaurav.android.app.command.LoginCommand;
 import com.mastergaurav.android.mvc.common.IResponseListener;
 import com.mastergaurav.android.mvc.common.Request;
@@ -12,6 +13,7 @@ public final class CommandExecutor
 	private final HashMap<Integer, Class<? extends ICommand>> commands = new HashMap<Integer, Class<? extends ICommand>>();
 
 	private static final CommandExecutor instance = new CommandExecutor();
+	private boolean initialized = false;
 
 	private CommandExecutor()
 	{
@@ -23,11 +25,15 @@ public final class CommandExecutor
 		return instance;
 	}
 
-	public void initialize()
+	public void ensureInitialized()
 	{
-		System.out.println("CommandExecutor::initialize");
-		CommandQueueManager.getInstance().initialize();
-		System.out.println("CommandExecutor::initialized");
+		if(!initialized)
+		{
+			initialized = true;
+			System.out.println("CommandExecutor::initialize");
+			CommandQueueManager.getInstance().initialize();
+			System.out.println("CommandExecutor::initialized");
+		}
 	}
 
 	public void enqueueCommand(int commandId, Request request, IResponseListener listener)
@@ -38,29 +44,10 @@ public final class CommandExecutor
 		{
 			cmd.setRequest(request);
 			cmd.setResponseListener(listener);
-			// Runnable r = new Runnable() {
-			// public void run()
-			// {
-			// try
-			// {
-			// Thread.sleep(1500);
-			// } catch (InterruptedException e)
-			// {
-			// e.printStackTrace();
-			// }
-			// cmd.execute();
-			// }
-			// };
-			// System.out.println("[CommandExecutor::enqueueCommand] Enqueue Command: "
-			// + cmd);
 			CommandQueueManager.getInstance().enqueue(cmd);
-			// new Thread(r).start();
-			// System.out.println("[CommandExecutor::enqueueCommand] Enqueued Command");
 		}
 	}
 
-	// Always create a new instance of the command -- commands are not singleton
-	// but miltiton
 	private ICommand getCommand(int commandId)
 	{
 		ICommand rv = null;

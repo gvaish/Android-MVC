@@ -10,9 +10,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
+
+import android.util.Log;
 
 import com.mastergaurav.android.mvc.common.Response;
 
@@ -69,18 +70,6 @@ public abstract class AbstractHttpCommand extends AbstractCommand
 			request.addHeader(HTTP.CONTENT_TYPE, ctype);
 		}
 
-		byte[] body = getBody();
-
-		if(body != null)
-		{
-			request.addHeader(HTTP.CONTENT_LEN, String.valueOf(body.length));
-
-			HttpPost post = (HttpPost) request;
-
-			ByteArrayEntity bodyData = new ByteArrayEntity(body);
-			post.setEntity(bodyData);
-		}
-
 		onBeforeExecute(request);
 	}
 
@@ -91,6 +80,7 @@ public abstract class AbstractHttpCommand extends AbstractCommand
 		Response response = new Response();
 		response.setTag(getRequest().getTag());
 
+		Log.i("AbstractHttpCommand", "Created the request: " + client + ", for request: " + request);
 		try
 		{
 			HttpResponse rawResponse = client.execute(request);
@@ -100,6 +90,7 @@ public abstract class AbstractHttpCommand extends AbstractCommand
 				// If All-Iz-Well, give the sub-class the raw-response to
 				// process and generate Response-data
 				responseData = getSuccessResponse(rawResponse);
+				response.setError(false);
 			} else
 			{
 				// If something's wrong with the response, let the sub-class
@@ -131,7 +122,7 @@ public abstract class AbstractHttpCommand extends AbstractCommand
 
 	protected Object getErrorResponse(Exception error)
 	{
-		return null;
+		return error;
 	}
 
 	protected Object getSuccessResponse(HttpResponse response)

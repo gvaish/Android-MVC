@@ -1,4 +1,4 @@
-package com.mastergaurav.android.mvc.command;
+package com.mastergaurav.android.app.command;
 
 public final class CommandID
 {

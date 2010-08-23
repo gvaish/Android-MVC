@@ -5,7 +5,7 @@ public class Response
 	private Object tag;
 	private Object data;
 	private boolean error;
-	private int targetScreenID;
+	private int targetActivityID;
 
 	public Response()
 	{
@@ -47,13 +47,13 @@ public class Response
 		this.error = error;
 	}
 
-	public int getTargetScreenID()
+	public int getTargetActivityID()
 	{
-		return targetScreenID;
+		return targetActivityID;
 	}
 
-	public void setTargetScreenID(int targetScreenID)
+	public void setTargetActivityID(int targetActivityID)
 	{
-		this.targetScreenID = targetScreenID;
+		this.targetActivityID = targetActivityID;
 	}
 }

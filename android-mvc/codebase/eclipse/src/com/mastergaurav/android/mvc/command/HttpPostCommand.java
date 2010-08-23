@@ -7,24 +7,25 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ByteArrayEntity;
 
+import android.util.Log;
+
 public abstract class HttpPostCommand extends AbstractHttpCommand
 {
 
 	protected HttpPostCommand(URI uri)
 	{
-		// super(uri);
+		setURI(uri);
 	}
-
-	protected abstract byte[] getPostBody();
-
-	protected abstract String getContentType();
 
 	@Override
 	protected void onBeforeExecute(HttpRequestBase request)
 	{
-		byte[] body = getPostBody();
-		request.addHeader("Content-Length", String.valueOf(body.length));
+		byte[] body = getBody();
+		assert body != null && body.length > 0 : "Body must be present in HttpPostCommand. Use HttpGetCommand instead.";
+		//request.addHeader("Content-Length", String.valueOf(body.length));
 
+		Log.d("HttpPostCommand", "Body: " + body);
+		
 		HttpPost post = (HttpPost) request;
 
 		ByteArrayEntity bodyData = new ByteArrayEntity(body);
@@ -40,11 +41,6 @@ public abstract class HttpPostCommand extends AbstractHttpCommand
 
 	@Override
 	protected Object getErrorResponse(Exception error)
-	{
-		return null;
-	}
-
-	protected HttpRequestBase getHttpCommand(URI uri)
 	{
 		return null;
 	}

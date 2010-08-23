@@ -14,7 +14,7 @@ public class IdentityCommand implements ICommand
 	{
 		Request request = getRequest();
 		Response response = new Response(request.getTag(), request.getData());
-		response.setTargetScreenID(request.getScreenID());
+		response.setTargetActivityID(request.getActivityID());
 
 		setResponse(response);
 		notifyListener(true);

@@ -7,10 +7,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
-import com.mastergaurav.android.app.view.HomeScreenActivity;
+import com.mastergaurav.android.app.view.HomeActivity;
 import com.mastergaurav.android.app.view.MainActivity;
 import com.mastergaurav.android.common.view.BaseActivity;
-import com.mastergaurav.android.common.view.ProgressActivity;
 import com.mastergaurav.android.mvc.command.CommandExecutor;
 import com.mastergaurav.android.mvc.common.IResponseListener;
 import com.mastergaurav.android.mvc.common.Request;
@@ -18,10 +17,14 @@ import com.mastergaurav.android.mvc.common.Response;
 
 public class Controller extends Application implements IResponseListener
 {
+	private static Controller theInstance;
 
 	public static final int ACTIVITY_ID_UPDATE_SAME = 0;
 	public static final int ACTIVITY_ID_SHOW_PREVIOUS = 1;
-	public static final int ACTIVITY_ID_PROGRESS = 6;
+
+	public static final int ACTIVITY_ID_BASE = 1000;
+
+	// public static final int ACTIVITY_ID_PROGRESS = 6;
 	// Useful for moving from error to previous or hitting the "Back" button
 
 	private BaseActivity currentActivity;
@@ -37,18 +40,33 @@ public class Controller extends Application implements IResponseListener
 		}
 	};
 
+	public static Controller getInstance()
+	{
+		return theInstance;
+	}
+
 	@Override
 	public void onCreate()
 	{
+		theInstance = this;
 		super.onCreate();
 
 		registeredActivities.clear();
 		// 1 to 10 are reserved. or better, use enums?
-		registeredActivities.put(ACTIVITY_ID_PROGRESS, ProgressActivity.class);
 		registeredActivities.put(11, MainActivity.class);
-		registeredActivities.put(87945, HomeScreenActivity.class);
+		registeredActivities.put(87945, HomeActivity.class);
 
-		CommandExecutor.getInstance().initialize();
+		CommandExecutor.getInstance().ensureInitialized();
+	}
+
+	public void registerActivity(int id, Class<? extends BaseActivity> clz)
+	{
+		registeredActivities.put(id, clz);
+	}
+
+	public void unregisterActivity(int id)
+	{
+		registeredActivities.remove(id);
 	}
 
 	// TODO: Get the initialization data, if available
@@ -107,14 +125,14 @@ public class Controller extends Application implements IResponseListener
 		System.out.println("Enqueued command");
 	}
 
-//	private void stopError()
-//	{
-//		if(errorActivity != null)
-//		{
-//			errorActivity.finish();
-//			errorActivity = null;
-//		}
-//	}
+	// private void stopError()
+	// {
+	// if(errorActivity != null)
+	// {
+	// errorActivity.finish();
+	// errorActivity = null;
+	// }
+	// }
 
 	public void onError(Response response)
 	{
@@ -145,18 +163,18 @@ public class Controller extends Application implements IResponseListener
 		System.out.println("Handle Message [obj]: " + msg.obj);
 
 		Response response = (Response) msg.obj;
+		System.out.println("Handle Message [isError]: " + response.isError());
 
 		if(response != null)
 		{
-
-			int screenID = response.getTargetScreenID();
+			int targetActivityID = response.getTargetActivityID();
 			Object[] newTag = (Object[]) response.getTag();
 			Object tag = newTag[0];
 			IResponseListener originalListener = (IResponseListener) newTag[1];
 			response.setTag(tag);
 
 			// self-update
-			if(screenID == 0)
+			if(targetActivityID == 0)
 			{
 				System.out.println("Original listener: " + originalListener);
 				if(originalListener != null)
@@ -171,7 +189,7 @@ public class Controller extends Application implements IResponseListener
 				}
 			} else
 			{
-				Class<? extends BaseActivity> cls = registeredActivities.get(screenID);
+				Class<? extends BaseActivity> cls = registeredActivities.get(targetActivityID);
 				if(cls != null)
 				{
 					System.out.println("Will launch: " + cls);
