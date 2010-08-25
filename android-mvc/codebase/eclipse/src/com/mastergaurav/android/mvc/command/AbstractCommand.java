@@ -1,7 +1,6 @@
 package com.mastergaurav.android.mvc.command;
 
 import com.mastergaurav.android.mvc.common.IResponseListener;
-import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
 
 /**
@@ -17,18 +16,16 @@ import com.mastergaurav.android.mvc.common.Response;
  * 
  * @author Gaurav Vaish
  */
-public abstract class AbstractCommand implements ICommand
+public abstract class AbstractCommand extends AbstractBaseCommand
 {
-	private Request request;
-	private Response response;
-	private IResponseListener responseListener;
-
 	public final void execute()
 	{
 		prepare();
 		onBeforeExecute();
 		go();
 		onAfterExecute();
+
+		Response response = getResponse();
 
 		if(response != null)
 		{
@@ -52,6 +49,8 @@ public abstract class AbstractCommand implements ICommand
 
 	protected void notifyListener(boolean success)
 	{
+		IResponseListener responseListener = getResponseListener();
+
 		System.out.println("AbstractCommand::notifyListener => " + success + " => " + responseListener);
 		if(responseListener != null)
 		{
@@ -63,35 +62,5 @@ public abstract class AbstractCommand implements ICommand
 				responseListener.onError(getResponse());
 			}
 		}
-	}
-
-	public Request getRequest()
-	{
-		return request;
-	}
-
-	public void setRequest(Request request)
-	{
-		this.request = request;
-	}
-
-	public Response getResponse()
-	{
-		return response;
-	}
-
-	public void setResponse(Response response)
-	{
-		this.response = response;
-	}
-
-	public IResponseListener getResponseListener()
-	{
-		return responseListener;
-	}
-
-	public void setResponseListener(IResponseListener responseListener)
-	{
-		this.responseListener = responseListener;
 	}
 }

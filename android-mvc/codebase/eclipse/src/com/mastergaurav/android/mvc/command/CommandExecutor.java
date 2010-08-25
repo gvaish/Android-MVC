@@ -36,6 +36,11 @@ public final class CommandExecutor
 		}
 	}
 
+	public void terminateAll()
+	{
+		// TODO: Terminate or mark all commands as terminated
+	}
+
 	public void enqueueCommand(int commandId, Request request, IResponseListener listener)
 	{
 		System.out.println("[CommandExecutor::enqueueCommand] Retrieving Command");

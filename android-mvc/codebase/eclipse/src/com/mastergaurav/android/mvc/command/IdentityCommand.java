@@ -4,16 +4,13 @@ import com.mastergaurav.android.mvc.common.IResponseListener;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
 
-public class IdentityCommand implements ICommand
+public class IdentityCommand extends AbstractBaseCommand implements ICommand
 {
-	private Request request;
-	private Response response;
-	private IResponseListener responseListener;
-
 	public void execute()
 	{
 		Request request = getRequest();
 		Response response = new Response(request.getTag(), request.getData());
+		response.setError(false);
 		response.setTargetActivityID(request.getActivityID());
 
 		setResponse(response);
@@ -22,39 +19,10 @@ public class IdentityCommand implements ICommand
 
 	protected void notifyListener(boolean success)
 	{
+		IResponseListener responseListener = getResponseListener();
 		if(responseListener != null)
 		{
 			responseListener.onSuccess(getResponse());
 		}
-	}
-
-	public Request getRequest()
-	{
-		return request;
-	}
-
-	public void setRequest(Request request)
-	{
-		this.request = request;
-	}
-
-	public Response getResponse()
-	{
-		return response;
-	}
-
-	public void setResponse(Response response)
-	{
-		this.response = response;
-	}
-
-	public IResponseListener getResponseListener()
-	{
-		return responseListener;
-	}
-
-	public void setResponseListener(IResponseListener responseListener)
-	{
-		this.responseListener = responseListener;
 	}
 }

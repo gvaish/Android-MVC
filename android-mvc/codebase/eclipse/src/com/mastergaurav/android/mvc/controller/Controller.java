@@ -1,6 +1,7 @@
 package com.mastergaurav.android.mvc.controller;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 import android.app.Application;
 import android.content.Intent;
@@ -24,32 +25,17 @@ public class Controller extends Application implements IResponseListener
 
 	public static final int ACTIVITY_ID_BASE = 1000;
 
-	// public static final int ACTIVITY_ID_PROGRESS = 6;
-	// Useful for moving from error to previous or hitting the "Back" button
-
 	private BaseActivity currentActivity;
-	// private Activity errorActivity;
 
 	private final HashMap<Integer, Class<? extends BaseActivity>> registeredActivities = new HashMap<Integer, Class<? extends BaseActivity>>();
-
-	private Handler handler = new Handler()
-	{
-		public void handleMessage(Message msg)
-		{
-			processResponse(msg);
-		}
-	};
-
-	public static Controller getInstance()
-	{
-		return theInstance;
-	}
+	private Stack<ActivityStackInfo> activityStack = new Stack<ActivityStackInfo>();
+	private NavigationDirection currentNavigationDirection;
 
 	@Override
 	public void onCreate()
 	{
-		theInstance = this;
 		super.onCreate();
+		theInstance = this;
 
 		registeredActivities.clear();
 		// 1 to 10 are reserved. or better, use enums?
@@ -57,16 +43,6 @@ public class Controller extends Application implements IResponseListener
 		registeredActivities.put(87945, HomeActivity.class);
 
 		CommandExecutor.getInstance().ensureInitialized();
-	}
-
-	public void registerActivity(int id, Class<? extends BaseActivity> clz)
-	{
-		registeredActivities.put(id, clz);
-	}
-
-	public void unregisterActivity(int id)
-	{
-		registeredActivities.remove(id);
 	}
 
 	// TODO: Get the initialization data, if available
@@ -77,14 +53,6 @@ public class Controller extends Application implements IResponseListener
 
 	public void onActivityCreated(BaseActivity activity)
 	{
-		// if(activity instanceof ProgressActivity)
-		// {
-		// progressActivity = activity;
-		// } else if(activity instanceof ErrorActivity)
-		// {
-		// errorActivity = activity;
-		// } else
-		// {
 		if(currentActivity != null)
 		{
 			currentActivity.finish();
@@ -107,14 +75,18 @@ public class Controller extends Application implements IResponseListener
 		}
 	}
 
-	// public void go(int commandID, Request request, IResponseListener
-	// listener)
-	// {
-	// go(commandID, request, listener, true);
-	// }
-
-	public void go(int commandID, Request request, IResponseListener listener, boolean showProgress)
+	public void go(int commandID, Request request, IResponseListener listener)
 	{
+		go(commandID, request, listener, true);
+	}
+
+	public void go(int commandID, Request request, IResponseListener listener, boolean record)
+	{
+		// if(!record) => Don't push it on stack
+		// if(record) => push it on stack
+
+		currentNavigationDirection = NavigationDirection.Forward;
+
 		Object[] newTag = {
 			request.getTag(), listener
 		};
@@ -123,16 +95,15 @@ public class Controller extends Application implements IResponseListener
 		System.out.println("Enqueue command");
 		CommandExecutor.getInstance().enqueueCommand(commandID, request, this);
 		System.out.println("Enqueued command");
+		
+		//ActivityStackInfo item = new ActivityStackInfo(activityID, commandID, request)
 	}
 
-	// private void stopError()
-	// {
-	// if(errorActivity != null)
-	// {
-	// errorActivity.finish();
-	// errorActivity = null;
-	// }
-	// }
+	public void back()
+	{
+		currentNavigationDirection = NavigationDirection.Backward;
+		//
+	}
 
 	public void onError(Response response)
 	{
@@ -152,12 +123,8 @@ public class Controller extends Application implements IResponseListener
 		handler.sendMessage(msg);
 	}
 
-	// TODO: Look at the response's screenID / resultID
-	// FIXME: Need to know whether we're
 	private void processResponse(Message msg)
 	{
-		// stopProgress();
-		// stopError();
 		System.out.println("Handle Message [thread]: " + Thread.currentThread().getName());
 		System.out.println("Handle Message [what]: " + msg.what);
 		System.out.println("Handle Message [obj]: " + msg.obj);
@@ -174,7 +141,7 @@ public class Controller extends Application implements IResponseListener
 			response.setTag(tag);
 
 			// self-update
-			if(targetActivityID == 0)
+			if(targetActivityID == ACTIVITY_ID_UPDATE_SAME)
 			{
 				System.out.println("Original listener: " + originalListener);
 				if(originalListener != null)
@@ -187,9 +154,20 @@ public class Controller extends Application implements IResponseListener
 						originalListener.onError(response);
 					}
 				}
-			} else
+			} else	// go back or forward
 			{
 				Class<? extends BaseActivity> cls = registeredActivities.get(targetActivityID);
+
+				switch(currentNavigationDirection)
+				{
+					case Forward:
+						//TODO: pop the command from the stack if(!info.isRecord())
+						break;
+					case Backward:
+						//TODO: pop the last command from the stack
+						break;
+				}
+
 				if(cls != null)
 				{
 					System.out.println("Will launch: " + cls);
@@ -200,5 +178,28 @@ public class Controller extends Application implements IResponseListener
 				}
 			}
 		}
+	}
+
+	public void registerActivity(int id, Class<? extends BaseActivity> clz)
+	{
+		registeredActivities.put(id, clz);
+	}
+
+	public void unregisterActivity(int id)
+	{
+		registeredActivities.remove(id);
+	}
+
+	private Handler handler = new Handler()
+	{
+		public void handleMessage(Message msg)
+		{
+			processResponse(msg);
+		}
+	};
+
+	public static Controller getInstance()
+	{
+		return theInstance;
 	}
 }
