@@ -3,8 +3,6 @@ package com.mastergaurav.android.mvc.command;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
-import com.mastergaurav.android.app.command.CommandID;
-import com.mastergaurav.android.app.command.LoginCommand;
 import com.mastergaurav.android.mvc.common.IResponseListener;
 import com.mastergaurav.android.mvc.common.Request;
 
@@ -15,9 +13,12 @@ public final class CommandExecutor
 	private static final CommandExecutor instance = new CommandExecutor();
 	private boolean initialized = false;
 
+	public static final int COMMAND_ID_IDENTITY = 1;
+	public static final int COMMAND_ID_BASE = 1000;
+
 	private CommandExecutor()
 	{
-		commands.put(CommandID.LOGIN_DO, LoginCommand.class);
+		commands.put(COMMAND_ID_IDENTITY, IdentityCommand.class);
 	}
 
 	public static CommandExecutor getInstance()

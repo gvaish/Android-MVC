@@ -16,7 +16,7 @@ public class HomeActivity extends BaseActivity
 {
 
 	@Override
-	protected int getLayoutResource()
+	protected int getContentViewID()
 	{
 		return R.layout.layout_screen_complex_list_view_activity;
 	}
@@ -57,11 +57,4 @@ public class HomeActivity extends BaseActivity
 	{
 		super.onCreateContent(savedInstanceState);
 	}
-
-	@Override
-	protected int getID()
-	{
-		return 87945;
-	}
-
 }

@@ -11,13 +11,15 @@ import com.mastergaurav.android.R;
 import com.mastergaurav.android.app.command.CommandID;
 import com.mastergaurav.android.app.model.LoginRequest;
 import com.mastergaurav.android.app.model.xml.LoginResponse;
+import com.mastergaurav.android.common.log.Logger;
 import com.mastergaurav.android.common.view.BaseActivity;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
-import com.mastergaurav.android.mvc.controller.Controller;
 
-public class MainActivity extends BaseActivity
+public class LoginActivity extends BaseActivity
 {
+	private static final String TAG = "App-View";
+
 	protected void onCreateContent(Bundle savedInstanceState)
 	{
 		setContentView(R.layout.main);
@@ -32,7 +34,7 @@ public class MainActivity extends BaseActivity
 				String password = ((EditText) findViewById(R.id.main_passwordEdit)).getText().toString();
 
 				LoginRequest data = new LoginRequest(username, password);
-				Object tag = "L";
+				Object tag = "Login-Tag";
 
 				Request request = new Request(tag, data);
 
@@ -40,15 +42,13 @@ public class MainActivity extends BaseActivity
 				go(CommandID.LOGIN_DO, request);
 			}
 		});
-
-		Controller.getInstance().registerActivity(ActivityID.ACTIVITY_ID_HOME, HomeActivity.class);
 	}
 
 	@Override
 	public void onSuccess(Response response)
 	{
 		hideProgress();
-		System.out.println("Received some response: " + Thread.currentThread().getName());
+		Logger.i(TAG, "Received some response: " + Thread.currentThread().getName());
 		TextView tv = (TextView) findViewById(R.id.hw);
 		tv.setText("Response: " + response.getData());
 	}
@@ -59,9 +59,9 @@ public class MainActivity extends BaseActivity
 		hideProgress();
 		System.out.println("Received some response: " + Thread.currentThread().getName());
 		TextView tv = (TextView) findViewById(R.id.hw);
-		
+
 		Object data = response.getData();
-		
+
 		if(data instanceof Throwable)
 		{
 			Throwable t = (Throwable) data;
@@ -74,11 +74,5 @@ public class MainActivity extends BaseActivity
 		{
 			tv.setText("Error Response: " + response.getData());
 		}
-	}
-
-	@Override
-	protected int getID()
-	{
-		return 12345;
 	}
 }

@@ -9,9 +9,10 @@ public class IdentityCommand extends AbstractBaseCommand implements ICommand
 	public void execute()
 	{
 		Request request = getRequest();
-		Response response = new Response(request.getTag(), request.getData());
+		Response response = new Response();
+		response.setTag(request.getTag());
 		response.setError(false);
-		response.setTargetActivityID(request.getActivityID());
+		response.setTargetActivityID((Integer) request.getData());
 
 		setResponse(response);
 		notifyListener(true);

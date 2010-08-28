@@ -9,7 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.mastergaurav.android.app.view.HomeActivity;
-import com.mastergaurav.android.app.view.MainActivity;
+import com.mastergaurav.android.app.view.LoginActivity;
+import com.mastergaurav.android.common.log.Logger;
 import com.mastergaurav.android.common.view.BaseActivity;
 import com.mastergaurav.android.mvc.command.CommandExecutor;
 import com.mastergaurav.android.mvc.common.IResponseListener;
@@ -18,10 +19,16 @@ import com.mastergaurav.android.mvc.common.Response;
 
 public class Controller extends Application implements IResponseListener
 {
+	private static final String TAG = "Controller";
+
 	private static Controller theInstance;
 
 	public static final int ACTIVITY_ID_UPDATE_SAME = 0;
-	public static final int ACTIVITY_ID_SHOW_PREVIOUS = 1;
+	// will be handled using "back" method.
+	// Assumption: Previous navigation is never triggered by a command execution
+	// (similar to that on the web => Clicking a button/link/form-submit only
+	// takes you forward)
+	// public static final int ACTIVITY_ID_SHOW_PREVIOUS = 1;
 
 	public static final int ACTIVITY_ID_BASE = 1000;
 
@@ -39,16 +46,23 @@ public class Controller extends Application implements IResponseListener
 
 		registeredActivities.clear();
 		// 1 to 10 are reserved. or better, use enums?
-		registeredActivities.put(11, MainActivity.class);
+		registeredActivities.put(11, LoginActivity.class);
 		registeredActivities.put(87945, HomeActivity.class);
 
 		CommandExecutor.getInstance().ensureInitialized();
 	}
 
-	// TODO: Get the initialization data, if available
 	public void onActivityCreating(BaseActivity activity)
 	{
-		// activity.initialize(null);
+		if(activityStack.size() > 0)
+		{
+			ActivityStackInfo info = activityStack.peek();
+			if(info != null)
+			{
+				Response response = info.getResponse();
+				activity.preProcessData(response);
+			}
+		}
 	}
 
 	public void onActivityCreated(BaseActivity activity)
@@ -58,69 +72,64 @@ public class Controller extends Application implements IResponseListener
 			currentActivity.finish();
 		}
 		currentActivity = activity;
-		// TODO/FIXME: Get relevant data
-		// currentActivity.processInitialData(response)
-		// currentActivity.loadMemento(savedMemento)
-		// }
-	}
+		int size = activityStack.size();
 
-	// TODO: Do house keeping of saved memento
-	// TODO: Is the instance of activity required as a parameter. I think
-	// currentActivity should just do all fine
-	public void onActivityPaused()
-	{
-		if(currentActivity != null)
+		if(size > 0)
 		{
-			// currentActivity.saveMemento()
+			ActivityStackInfo info = activityStack.peek();
+			if(info != null)
+			{
+				Response response = info.getResponse();
+				activity.processData(response);
+
+				if(size >= 2 && !info.isRecord())
+				{
+					activityStack.pop();
+				}
+			}
 		}
 	}
 
-	public void go(int commandID, Request request, IResponseListener listener)
+	public void go(int commandID, Request request, IResponseListener listener, boolean record, boolean resetStack)
 	{
-		go(commandID, request, listener, true);
-	}
-
-	public void go(int commandID, Request request, IResponseListener listener, boolean record)
-	{
-		// if(!record) => Don't push it on stack
-		// if(record) => push it on stack
+		Logger.i(TAG, "go with cmdid=" + commandID + ", record: " + record + ",rs: " + resetStack + ", request: "
+				+ request);
+		if(resetStack)
+		{
+			activityStack.clear();
+		}
 
 		currentNavigationDirection = NavigationDirection.Forward;
+
+		ActivityStackInfo info = new ActivityStackInfo(commandID, request, record, resetStack);
+		activityStack.add(info);
 
 		Object[] newTag = {
 			request.getTag(), listener
 		};
 		request.setTag(newTag);
 
-		System.out.println("Enqueue command");
+		Logger.i(TAG, "Enqueue-ing command");
 		CommandExecutor.getInstance().enqueueCommand(commandID, request, this);
-		System.out.println("Enqueued command");
-		
-		//ActivityStackInfo item = new ActivityStackInfo(activityID, commandID, request)
+		Logger.i(TAG, "Enqueued command");
 	}
 
 	public void back()
 	{
-		currentNavigationDirection = NavigationDirection.Backward;
-		//
-	}
+		Logger.i(TAG, "ActivityStack Size: " + activityStack.size());
+		if(activityStack != null && activityStack.size() != 0)
+		{
+			if(activityStack.size() >= 2)
+			{
+				// Throw-away the last command, but only if there are at least
+				// two commands
+				activityStack.pop();
+			}
 
-	public void onError(Response response)
-	{
-		handleResponse(response);
-	}
-
-	public void onSuccess(Response response)
-	{
-		handleResponse(response);
-	}
-
-	private void handleResponse(Response response)
-	{
-		Message msg = new Message();
-		msg.what = 0;
-		msg.obj = response;
-		handler.sendMessage(msg);
+			currentNavigationDirection = NavigationDirection.Backward;
+			ActivityStackInfo info = activityStack.peek();
+			CommandExecutor.getInstance().enqueueCommand(info.getCommandID(), info.getRequest(), this);
+		}
 	}
 
 	private void processResponse(Message msg)
@@ -132,6 +141,8 @@ public class Controller extends Application implements IResponseListener
 		Response response = (Response) msg.obj;
 		System.out.println("Handle Message [isError]: " + response.isError());
 
+		ActivityStackInfo top = activityStack.peek();
+		top.setResponse(response);
 		if(response != null)
 		{
 			int targetActivityID = response.getTargetActivityID();
@@ -154,27 +165,41 @@ public class Controller extends Application implements IResponseListener
 						originalListener.onError(response);
 					}
 				}
-			} else	// go back or forward
+			} else
 			{
 				Class<? extends BaseActivity> cls = registeredActivities.get(targetActivityID);
+				Logger.i(TAG, "Launching new activity // else, current Direction: " + currentNavigationDirection);
+
+				int asize = activityStack.size();
+				Logger.i(TAG, "Current Stack Size (before processing): " + asize);
 
 				switch(currentNavigationDirection)
 				{
 					case Forward:
-						//TODO: pop the command from the stack if(!info.isRecord())
+						if(asize >= 2)
+						{
+							if(!top.isRecord())
+							{
+								activityStack.pop();
+							}
+						}
 						break;
 					case Backward:
-						//TODO: pop the last command from the stack
+						// Popping of the last command from the stack would have
+						// happened in (back)
+						// Just reset the navigation direction
+						currentNavigationDirection = NavigationDirection.Forward;
 						break;
 				}
+				Logger.i(TAG, "Current Stack Size (after processing): " + activityStack.size());
 
 				if(cls != null)
 				{
-					System.out.println("Will launch: " + cls);
+					Logger.i(TAG, "Will launch: " + cls);
 					Intent launcherIntent = new Intent(currentActivity, cls);
 					currentActivity.startActivity(launcherIntent);
 					currentActivity.finish();
-					// TODO: Manage the stack!
+					top.setActivityClass(cls);
 				}
 			}
 		}
@@ -201,5 +226,23 @@ public class Controller extends Application implements IResponseListener
 	public static Controller getInstance()
 	{
 		return theInstance;
+	}
+
+	public void onError(Response response)
+	{
+		handleResponse(response);
+	}
+
+	public void onSuccess(Response response)
+	{
+		handleResponse(response);
+	}
+
+	private void handleResponse(Response response)
+	{
+		Message msg = new Message();
+		msg.what = 0;
+		msg.obj = response;
+		handler.sendMessage(msg);
 	}
 }

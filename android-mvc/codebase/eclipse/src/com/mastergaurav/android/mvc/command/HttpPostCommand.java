@@ -22,10 +22,10 @@ public abstract class HttpPostCommand extends AbstractHttpCommand
 	{
 		byte[] body = getBody();
 		assert body != null && body.length > 0 : "Body must be present in HttpPostCommand. Use HttpGetCommand instead.";
-		//request.addHeader("Content-Length", String.valueOf(body.length));
+		// request.addHeader("Content-Length", String.valueOf(body.length));
 
 		Log.d("HttpPostCommand", "Body: " + body);
-		
+
 		HttpPost post = (HttpPost) request;
 
 		ByteArrayEntity bodyData = new ByteArrayEntity(body);

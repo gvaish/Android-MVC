@@ -2,6 +2,7 @@ package com.mastergaurav.android.mvc.controller;
 
 import com.mastergaurav.android.common.view.BaseActivity;
 import com.mastergaurav.android.mvc.common.Request;
+import com.mastergaurav.android.mvc.common.Response;
 
 public class ActivityStackInfo
 {
@@ -9,10 +10,19 @@ public class ActivityStackInfo
 	private int commandID;
 	private Request request;
 	private boolean record;
-	private boolean clearStack;
+	private boolean resetStack;
+	private Response response;
 
 	public ActivityStackInfo()
 	{
+	}
+
+	public ActivityStackInfo(int commandID, Request request, boolean record, boolean resetStack)
+	{
+		this.commandID = commandID;
+		this.request = request;
+		this.record = record;
+		this.resetStack = resetStack;
 	}
 
 	public ActivityStackInfo(Class<? extends BaseActivity> activityClass, int commandID, Request request)
@@ -23,13 +33,13 @@ public class ActivityStackInfo
 	}
 
 	public ActivityStackInfo(Class<? extends BaseActivity> activityClass, int commandID, Request request,
-			boolean record, boolean clearStack)
+			boolean record, boolean resetStack)
 	{
 		this.activityClass = activityClass;
 		this.commandID = commandID;
 		this.request = request;
 		this.record = record;
-		this.clearStack = clearStack;
+		this.resetStack = resetStack;
 	}
 
 	public Class<? extends BaseActivity> getActivityClass()
@@ -72,13 +82,23 @@ public class ActivityStackInfo
 		this.record = record;
 	}
 
-	public boolean isClearStack()
+	public Response getResponse()
 	{
-		return clearStack;
+		return response;
 	}
 
-	public void setClearStack(boolean clearStack)
+	public void setResponse(Response response)
 	{
-		this.clearStack = clearStack;
+		this.response = response;
+	}
+
+	public boolean isResetStack()
+	{
+		return resetStack;
+	}
+
+	public void setResetStack(boolean resetStack)
+	{
+		this.resetStack = resetStack;
 	}
 }

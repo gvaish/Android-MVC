@@ -4,9 +4,8 @@ import com.mastergaurav.android.mvc.common.IResponseListener;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
 
-public class AbstractBaseCommand
+public abstract class AbstractBaseCommand implements ICommand
 {
-
 	private Request request;
 	private Response response;
 	private IResponseListener responseListener;

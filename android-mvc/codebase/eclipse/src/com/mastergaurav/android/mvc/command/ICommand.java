@@ -21,5 +21,6 @@ public interface ICommand
 	void setResponseListener(IResponseListener listener);
 
 	void setTerminated(boolean terminated);
+
 	boolean isTerminated();
 }
