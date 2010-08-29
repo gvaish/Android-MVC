@@ -1,3 +1,12 @@
+(C) 2010, Gaurav Vaish
+http://www.mastergaurav.com
+http://blogs.mastergaurav
+
+All code is available under Apache Public License v2.0
+
+
+----------------------------------------------------------------
+
 Model View Controller for Android.
 
 The key components are:
@@ -15,4 +24,5 @@ navigation is separated out).
 Will be looking at implementing the last part (decoupled navigation)
 in, may be, a branch or a fork ;)
 
+----------------------------------------------------------------
 
