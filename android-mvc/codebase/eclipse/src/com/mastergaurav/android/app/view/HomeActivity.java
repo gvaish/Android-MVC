@@ -22,7 +22,7 @@ public class HomeActivity extends BaseActivity
 	}
 
 	private List<String> items1 = CollectionUtils.asList("One", "Two", "Three", "Four", "Five", "Six");
-	private List<String> items2 = CollectionUtils.asList("2-One", "2-Two", "2-Three", "2-Four", "2-Five", "2-Six");
+	private List<String> items2 = CollectionUtils.asList("2-One", "2-Two", "2-Three", "2-Four", "2-Five", "2-Six", "7-Seven");
 
 	private int usedItem = 0;
 	private MainContentAdapter adapter;

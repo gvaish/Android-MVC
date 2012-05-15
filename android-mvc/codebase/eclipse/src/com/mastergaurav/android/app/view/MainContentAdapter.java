@@ -52,16 +52,19 @@ public class MainContentAdapter extends BaseAdapter
 
 	public int getCount()
 	{
+		System.out.println("MainContentAdapter::getCount => " + items.size());
 		return items.size();
 	}
 
 	public Object getItem(int position)
 	{
+		System.out.println("MainContentAdapter::getItem@:: " + position + " => " + items.get(position));
 		return items.get(position);
 	}
 
 	public long getItemId(int position)
 	{
+		System.out.println("MainContentAdapter::getItemId@ => " + position);
 		return items.get(position).hashCode();
 	}
 
@@ -70,6 +73,8 @@ public class MainContentAdapter extends BaseAdapter
 		ViewGroup toShow = null;
 		TextView tv = null;
 
+		System.out.println("MainContentAdapter::getView called");
+		
 		if(convertView != null)
 		{
 			System.out.println("convertView is NOT null, NOT creating anything...");
