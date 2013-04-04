@@ -96,11 +96,12 @@ public class Controller extends Application implements IResponseListener
 				+ request);
 		
 		//FIXME: This should be in processResponse
-		// Reason: Splash -> Login -> //
+		/*
 		if(resetStack)
 		{
 			activityStack.clear();
 		}
+		//*/
 
 		currentNavigationDirection = NavigationDirection.Forward;
 
@@ -177,13 +178,17 @@ public class Controller extends Application implements IResponseListener
 				Class<? extends BaseActivity> cls = registeredActivities.get(targetActivityID);
 				Logger.i(TAG, "Launching new activity // else, current Direction: " + currentNavigationDirection);
 
-				int asize = activityStack.size();
-				Logger.i(TAG, "Current Stack Size (before processing): " + asize);
+				Logger.i(TAG, "Current Stack Size (before processing): " + activityStack.size());
+				Logger.i(TAG, "Reset Stack? " + top.isResetStack());
 
 				switch(currentNavigationDirection)
 				{
 					case Forward:
-						if(asize >= 2)
+						if(top.isResetStack())
+						{
+							activityStack.clear();
+							activityStack.add(top);
+						} else if(activityStack.size() >= 2)
 						{
 							if(!top.isRecord())
 							{
@@ -205,6 +210,9 @@ public class Controller extends Application implements IResponseListener
 					Logger.i(TAG, "Will launch: " + cls);
 					Intent launcherIntent = new Intent(currentActivity, cls);
 					currentActivity.startActivity(launcherIntent);
+					//FIXME: Show I finish the current activity? Why?
+					// IF not, must change doNativeBack() to return "true" by default,
+					//   or rather create doCustomBack() and use that.
 					currentActivity.finish();
 					top.setActivityClass(cls);
 				}

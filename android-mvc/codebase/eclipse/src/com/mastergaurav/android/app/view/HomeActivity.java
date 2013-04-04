@@ -14,16 +14,10 @@ import com.mastergaurav.android.common.view.BaseActivity;
 
 public class HomeActivity extends BaseActivity
 {
-
-	@Override
-	protected int getContentViewID()
-	{
-		return R.layout.layout_screen_complex_list_view_activity;
-	}
-
 	private List<String> items1 = CollectionUtils.asList("One", "Two", "Three", "Four", "Five", "Six");
 	private List<String> items2 = CollectionUtils.asList("2-One", "2-Two", "2-Three", "2-Four", "2-Five", "2-Six", "7-Seven");
 
+	private long backTime;
 	private int usedItem = 0;
 	private MainContentAdapter adapter;
 
@@ -53,8 +47,32 @@ public class HomeActivity extends BaseActivity
 	}
 
 	@Override
+	protected int getContentViewID()
+	{
+		return R.layout.layout_screen_complex_list_view_activity;
+	}
+
+	@Override
 	protected void onCreateContent(Bundle savedInstanceState)
 	{
 		super.onCreateContent(savedInstanceState);
+	}
+
+	/**
+	 * If the user clicks back button twice within 500ms, "exit" the app.
+	 * How? "finish" this activity and we know, this is the only one.
+	 */
+	@Override
+	public void onBackPressed()
+	{
+		long now = System.currentTimeMillis();
+		if((now - backTime) <= 500)
+		{
+			finish();
+		} else
+		{
+			backTime = now;
+			super.onBackPressed();
+		}
 	}
 }

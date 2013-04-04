@@ -39,7 +39,7 @@ public class LoginActivity extends BaseActivity
 				Request request = new Request(tag, data);
 
 				System.out.println("Starting controller...");
-				go(CommandID.LOGIN_DO, request);
+				go(CommandID.LOGIN_DO, request, true, true, true);
 			}
 		});
 	}
