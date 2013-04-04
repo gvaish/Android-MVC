@@ -94,6 +94,9 @@ public class Controller extends Application implements IResponseListener
 	{
 		Logger.i(TAG, "go with cmdid=" + commandID + ", record: " + record + ",rs: " + resetStack + ", request: "
 				+ request);
+		
+		//FIXME: This should be in processResponse
+		// Reason: Splash -> Login -> //
 		if(resetStack)
 		{
 			activityStack.clear();
@@ -119,6 +122,10 @@ public class Controller extends Application implements IResponseListener
 		Logger.i(TAG, "ActivityStack Size: " + activityStack.size());
 		if(activityStack != null && activityStack.size() != 0)
 		{
+			if(activityStack.size() == 1)
+			{
+				return;
+			}
 			if(activityStack.size() >= 2)
 			{
 				// Throw-away the last command, but only if there are at least
