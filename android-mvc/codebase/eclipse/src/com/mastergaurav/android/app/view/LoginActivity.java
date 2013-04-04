@@ -20,7 +20,8 @@ public class LoginActivity extends BaseActivity
 {
 	private static final String TAG = "App-View";
 
-	protected void onCreateContent(Bundle savedInstanceState)
+	@Override
+	public void onCreateContent(Bundle savedInstanceState)
 	{
 		setContentView(R.layout.main);
 

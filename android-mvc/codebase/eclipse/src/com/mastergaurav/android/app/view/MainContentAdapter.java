@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.mastergaurav.android.R;
 import com.mastergaurav.android.common.view.BaseActivity;
+import com.mastergaurav.android.common.view.IViewActivity;
 
 public class MainContentAdapter extends BaseAdapter
 {
@@ -25,7 +26,7 @@ public class MainContentAdapter extends BaseAdapter
 		this.items = items;
 	}
 
-	public BaseActivity getActivity()
+	public IViewActivity getActivity()
 	{
 		return activity;
 	}

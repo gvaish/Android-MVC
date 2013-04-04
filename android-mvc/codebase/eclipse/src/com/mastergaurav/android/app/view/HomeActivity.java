@@ -22,7 +22,7 @@ public class HomeActivity extends BaseActivity
 	private MainContentAdapter adapter;
 
 	@Override
-	protected void onAfterCreate(Bundle savedInstanceState)
+	public void onAfterCreate(Bundle savedInstanceState)
 	{
 		super.onAfterCreate(savedInstanceState);
 		adapter = new MainContentAdapter(this, items1);
@@ -47,13 +47,13 @@ public class HomeActivity extends BaseActivity
 	}
 
 	@Override
-	protected int getContentViewID()
+	public int getContentViewID()
 	{
 		return R.layout.layout_screen_complex_list_view_activity;
 	}
 
 	@Override
-	protected void onCreateContent(Bundle savedInstanceState)
+	public void onCreateContent(Bundle savedInstanceState)
 	{
 		super.onCreateContent(savedInstanceState);
 	}

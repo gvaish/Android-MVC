@@ -1,12 +1,13 @@
 package com.mastergaurav.android.mvc.controller;
 
 import com.mastergaurav.android.common.view.BaseActivity;
+import com.mastergaurav.android.common.view.IViewActivity;
 import com.mastergaurav.android.mvc.common.Request;
 import com.mastergaurav.android.mvc.common.Response;
 
 public class ActivityStackInfo
 {
-	private Class<? extends BaseActivity> activityClass;
+	private Class<? extends IViewActivity> activityClass;
 	private int commandID;
 	private Request request;
 	private boolean record;
@@ -42,12 +43,12 @@ public class ActivityStackInfo
 		this.resetStack = resetStack;
 	}
 
-	public Class<? extends BaseActivity> getActivityClass()
+	public Class<? extends IViewActivity> getActivityClass()
 	{
 		return activityClass;
 	}
 
-	public void setActivityClass(Class<? extends BaseActivity> activityClass)
+	public void setActivityClass(Class<? extends IViewActivity> activityClass)
 	{
 		this.activityClass = activityClass;
 	}

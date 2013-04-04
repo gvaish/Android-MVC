@@ -28,7 +28,7 @@ public class SplashActivity extends BaseActivity
 	};
 
 	@Override
-	protected View createContentView()
+	public View createContentView()
 	{
 		TextView tv = new TextView(this);
 		tv.setTextSize(40);
@@ -39,13 +39,13 @@ public class SplashActivity extends BaseActivity
 	}
 
 	@Override
-	protected void onBeforeCreate(Bundle savedInstanceState)
+	public void onBeforeCreate(Bundle savedInstanceState)
 	{
 		Initializer.ensureInitialized();
 	}
 
 	@Override
-	protected void onAfterCreate(Bundle savedInstanceState)
+	public void onAfterCreate(Bundle savedInstanceState)
 	{
 		TimerTask task = new TimerTask()
 		{
