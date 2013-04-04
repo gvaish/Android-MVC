@@ -1,4 +1,7 @@
 *.class
 bin
 gen
-
+*.apk
+.DS_Store
+*~
+*.swp
